@@ -7,6 +7,13 @@
 #include <stdlib.h>
 
 
+// Tiffany Torres F. - 2241747 - tiffany.torre@correounivalle.edu.co
+// Julian Rengifo J. - 2241016 - julian.david.rengifo@correounivalle.edu.co
+// Pablo Becerra G. - 2243506 - pablo.becerra@correounivalle.edu.co
+
+// Simulador de siclo basico de instrucciones - Sistemas Operativos
+
+
 using namespace std;
 void leerArchivo(); 
 
@@ -15,6 +22,9 @@ int main() {
   leerArchivo();
   return 0;
 }
+
+// se usa un diccionario para simular la memeoria, la clave del diccionario sera la direccion de la memoria D1, D2, D3, etc.
+
 
 void leerArchivo(){
   string fileName;
@@ -27,8 +37,9 @@ void leerArchivo(){
   string mar = "";
   int mdr = 0;
   string uc = "";
+  int mdr_ldr = 0;
 
-  unordered_map<string, int> memory;  
+  unordered_map<string, int> memoria;  
 
   if(archivo.is_open()){
 
@@ -41,19 +52,21 @@ void leerArchivo(){
 
       }
       
+      //funcion SET
       if (!palabras.empty() && palabras[0] == "SET" && palabras.size() >= 3) { 
         uc = palabras[0];
         string clave = palabras[1];
-        int mdr = stoi(palabras[2]);
+        mdr = stoi(palabras[2]);
         mar = palabras[1];
-        memory[mar] = mdr;
+        memoria[mar] = mdr;
         icr++;
       }
       
+      //funciones SHW
       if (!palabras.empty() && palabras[0] == "SHW" && palabras.size() >= 3) {
         if(palabras[2]=="NULL" && palabras[3]=="NULL"){
           uc = palabras[0];
-          int value= memory[palabras[1]] ;
+          int value= memoria[palabras[1]] ;
           cout<<value<<endl;
           icr++;
         }
@@ -74,7 +87,7 @@ void leerArchivo(){
         }
         if(palabras[1]=="MDR"){
           uc = palabras[0];
-          cout<<"MDR: "<<mdr<<endl;
+          cout<<"MDR: "<<mdr_ldr <<endl;
           icr++;
         }
         if(palabras[1]=="UC"){
@@ -84,21 +97,22 @@ void leerArchivo(){
         }
       }
       
+      //funciones ADD
       if (!palabras.empty() && palabras[0] == "ADD" && palabras.size() >= 3) {
         if(palabras[2]=="NULL" && palabras[3]=="NULL"){
             uc = palabras[0];
             mar = palabras[1];
-            int mdr = memory[mar];
+            mdr = memoria[mar];
             accumulator = accumulator + mdr;
             icr++;            
         }
         if(palabras[2]!="NULL" && palabras[3]=="NULL"){
            uc = palabras[0];
             mar = palabras[1];
-            mdr = memory[mar];
+            mdr = memoria[mar];
             int value1 = mdr;
             mar =palabras[2];
-            mdr = memory[mar];
+            mdr = memoria[mar];
             int value2 = mdr;  
             accumulator =  value1 + value2;
             icr++;
@@ -106,61 +120,69 @@ void leerArchivo(){
         if(palabras[2]!="NULL" && palabras[3]!="NULL"){
             uc = palabras[0];
             mar = palabras[1];
-            mdr = memory[mar];
+            mdr = memoria[mar];
             int value = mdr;
             mar = palabras[2];
-            mdr = memory[mar];
+            mdr = memoria[mar];
             int value2 = mdr;
             int suma = value + value2;
-            memory[palabras[3]] = suma;
+            memoria[palabras[3]] = suma;
             icr++;
         }
       }
       
+      //funcion LDR
       if (!palabras.empty() && palabras[0] == "LDR" && palabras.size() >= 3) {
         uc = palabras[0];
         mar = palabras[1];
-        mdr = memory[mar];
+        mdr_ldr = memoria[mar];
         int value = mdr;
-        accumulator=value;
+        accumulator = mdr_ldr;
         icr++;
        
       }
       
+
+      //funcion INC
       if (!palabras.empty() && palabras[0] == "INC" && palabras.size() >= 3){
         uc = palabras[0];
         mar = palabras[1];
-        mdr = memory[mar];
+        mdr = memoria[mar];
         int value = mdr;
         int increment = value + 1;
-        memory[mar]=increment;
+        memoria[mar]=increment;
         icr++;
       
       }
       
+
+      //funcion DEC
       if (!palabras.empty() && palabras[0] == "DEC" && palabras.size() >= 3){
         uc = palabras[0];
         mar = palabras[1];
-        mdr = memory[mar];
+        mdr = memoria[mar];
         int value = mdr;
         int decrement = value - 1;
-        memory[mar]=decrement;
+        memoria[mar]=decrement;
         icr++;
         
       }
       
+      //funcion STR
       if (!palabras.empty() && palabras[0] == "STR" && palabras.size() >= 3) {
         uc = palabras[0];
         mar = palabras[1];
-        memory[mar]=accumulator;
+        memoria[mar]=accumulator;
         accumulator=0;
         icr++;
       }
       
+
+      //funcion PAUSE
       if (!palabras.empty() && palabras[0] == "PAUSE" && palabras.size() >= 3) {
         uc = palabras[0];
         cout<<"El simulador esta en pausa, estos son los valores actuales en memoria:"<<endl;
-        for (const auto& entry : memory) {
+        for (const auto& entry : memoria) {
           cout << "Direccion: " << entry.first << ", Valor: " << entry.second << endl;
         } 
         string valorUsuario = "";
@@ -179,6 +201,8 @@ void leerArchivo(){
         icr++;
       }
       
+
+      //funcion END
       if (!palabras.empty() && palabras[0] == "END" && palabras.size() >= 3) {
         uc = palabras[0];
         cout<<"Simulacion terminada";
